@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+  <category label="30106">
+    <setting id="quality" type="enum" label="30007" values="270p|360p|540p|720p" default="3"/>
+    <setting id="page_itemCount" type="enum" label="30015" values="5|10|15|20|25|30" default="3"/>
+    <setting type="sep"/>
+    <setting id="skip_itemPage" type="bool" label="30016" default="false"/>
+    <!--<setting id="suppress_MusicClips" type="bool" label="30008" default="false"/>
+    <setting id="suppress_duration" type="select" label="30009" lvalues="30010|30011|30012|30013|30014" default="0"/>-->
+  </category>
+</settings>
