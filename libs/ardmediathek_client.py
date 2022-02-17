@@ -37,6 +37,10 @@ class ArdMediathekClient:
                         '?pageNumber={pageNumber}&pageSize={' \
                         'pageSize}&embedded=true&seasoned=false&seasonNumber=&withAudiodescription=false' \
                         '&withOriginalWithSubtitle=false&withOriginalversion=false'
+
+        self._SEARCHURL = f'https://page.ardmediathek.de/page-gateway/widgets/{channel}/search/vod' \
+                          '?searchString={searchstring}&pageNumber={pageNumber}'
+
         self._POSTERWIDTH = 480
 
         fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/{fanart}'
@@ -133,7 +137,7 @@ class ArdMediathekClient:
         url = teaser['url']
         self.setItemView(url, None)
 
-    def setHomeView(self, url, tag=None):
+    def setListView(self, url, tag=None):
         API = ARDMediathekAPI(url, tag)
         pagination = API.getPagination()
         teasers = API.getTeaser()
@@ -160,7 +164,17 @@ class ArdMediathekClient:
                     'posterWidth': self._POSTERWIDTH
                 }
                 self._guiManager.addDirectory(title=f'Page {strPageNumber}',
-                                              args=self.buildArgs('home', self._BASEURL, json.dumps(tag)))
+                                              args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
+
+    def SetSearchView(self, url, tag=None):
+        pass
+
+    def setHomeView(self, url, tag=None):
+        self._guiManager.addDirectory(title=f' {self._t.getString(HOME)}',
+                                      args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
+
+        self._guiManager.addDirectory(title=f' {self._t.getString(SEARCH)}',
+                                      args=self.buildArgs('search', self._BASEURL, json.dumps(tag)))
 
     @staticmethod
     def get_query_args(s_args):
@@ -206,6 +220,8 @@ class ArdMediathekClient:
 
         {
             'home': self.setHomeView,
+            'search': self.setSearchView,
+            'list': self.setListView,
             'item': self.setItemView
         }[method](url, tag)
 

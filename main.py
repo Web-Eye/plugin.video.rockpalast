@@ -20,6 +20,7 @@ from libs.ardmediathek_client import ArdMediathekClient
 if __name__ == '__main__':
     addon_id = 'plugin.video.rockpalast'
     channel = 'wdr'
+    show_name = 'Rockpalast'
     mediathek_id = 'Y3JpZDovL3dkci5kZS9Sb2NrcGFsYXN0'
     fanart = 'fanart.jpeg'
 

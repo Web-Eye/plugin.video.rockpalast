@@ -55,3 +55,11 @@ msgstr ""
 msgctxt "#30016"
 msgid "Skip Details-View"
 msgstr ""
+
+msgctxt "#30017"
+msgid "Home"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Search"
+msgstr ""

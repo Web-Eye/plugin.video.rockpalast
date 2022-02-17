@@ -55,3 +55,11 @@ msgstr "Einträge pro Seite"
 msgctxt "#30016"
 msgid "Skip Details-View"
 msgstr "Überspringe Detailansicht"
+
+msgctxt "#30017"
+msgid "Home"
+msgstr "Startansicht"
+
+msgctxt "#30018"
+msgid "Search"
+msgstr "Suche"
