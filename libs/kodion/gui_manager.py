@@ -17,7 +17,7 @@
 
 import xbmcplugin
 import xbmcgui
-
+import xbmc
 
 import urllib.parse
 
@@ -31,6 +31,7 @@ class GuiManager:
 
     def __init__(self, argv, addon_id, default_image_url, fanart):
         self._argv = int(argv)
+        self._debug = os.getenv('kodi_debug') is not None
         self._addon_id = addon_id
         self._default_image_url = default_image_url
         self._fanart = fanart
@@ -94,3 +95,16 @@ class GuiManager:
 
     def endOfDirectory(self):
         xbmcplugin.endOfDirectory(self._argv)
+
+    def getInput(self,  default=None, heading=None, hidden=None, debugDefault=None):
+        if not self._debug:
+            kb = xbmc.Keyboard(default, heading, hidden)
+            kb.doModal()
+            if kb.isConfirmed():
+                return kb.getText()
+
+            return ''
+
+        else:
+            return debugDefault
+

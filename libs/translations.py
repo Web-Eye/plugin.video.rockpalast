@@ -23,6 +23,7 @@ MINUTES = 'minutes'
 SECONDS = 'seconds'
 HOME = 'home'
 SEARCH = 'search'
+SEARCHHEADER = 'searchheader'
 
 
 class Translations:
@@ -40,5 +41,6 @@ class Translations:
             MINUTES:           self._language(30104),
             SECONDS:           self._language(30105),
             HOME:              self._language(30117),
-            SEARCH:            self._language(30118)
+            SEARCH:            self._language(30118),
+            SEARCHHEADER:      self._language(30119)
         }[name]

@@ -29,7 +29,7 @@ from libs.translations import *
 
 class ArdMediathekClient:
 
-    def __init__(self, addon_id, mediathek_id, channel, fanart):
+    def __init__(self, addon_id, mediathek_id, channel, show_name, fanart):
 
         # -- Constants ----------------------------------------------
         self._ADDON_ID = addon_id
@@ -42,7 +42,7 @@ class ArdMediathekClient:
                           '?searchString={searchstring}&pageNumber={pageNumber}'
 
         self._POSTERWIDTH = 480
-
+        self._showname = show_name
         fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/{fanart}'
         self._FANART = kodionUtils.translatePath(fanart)
         self._DEFAULT_IMAGE_URL = ''
@@ -166,8 +166,11 @@ class ArdMediathekClient:
                 self._guiManager.addDirectory(title=f'Page {strPageNumber}',
                                               args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
 
-    def SetSearchView(self, url, tag=None):
-        pass
+    def setSearchView(self, url, tag=None):
+        _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
+        if _filter != '':
+            url = self._SEARCHURL.replace('{searchstring}', f'{self._showname}|{_filter}')
+            self.setListView(url, tag)
 
     def setHomeView(self, url, tag=None):
         self._guiManager.addDirectory(title=f' {self._t.getString(HOME)}',
