@@ -72,6 +72,8 @@ class ArdMediathekClient:
         #     '4': 300
         # }[addon.getSetting('suppress_duration')]
 
+        self._DirectoryBuilded = False
+
     def setItemView(self, url, tag=None):
 
         tag = {
@@ -94,6 +96,7 @@ class ArdMediathekClient:
 
             self._guiManager.addItem(title=title, url=item['url'], poster=item['poster'], _type='video',
                                      infoLabels=infoLabels)
+            self._DirectoryBuilded = True
 
     # def _isValidTeaser(self, teaser):
     #     if self._suppress_MusicClips and 'Musik bei Inas Nacht:' in teaser['title']:
@@ -132,6 +135,7 @@ class ArdMediathekClient:
 
         self._guiManager.addDirectory(title=title, poster=teaser['poster'], _type='Video',
                                       infoLabels=infoLabels, args=self.buildArgs('item', teaser['url']))
+        self._DirectoryBuilded = True
 
     def addClip(self, teaser):
         url = teaser['url']
@@ -166,18 +170,24 @@ class ArdMediathekClient:
                 self._guiManager.addDirectory(title=f'Page {strPageNumber}',
                                               args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
 
+        self._DirectoryBuilded = True
+
     def setSearchView(self, url, tag=None):
+
+        # TODO: Disable search, when coming from Backbutton
+
         _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
         if _filter != '':
             url = self._SEARCHURL.replace('{searchstring}', f'{self._showname}|{_filter}')
             self.setListView(url, tag)
 
     def setHomeView(self, url, tag=None):
-        self._guiManager.addDirectory(title=f' {self._t.getString(HOME)}',
+        self._guiManager.addDirectory(title=self._t.getString(HOME),
                                       args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
 
-        self._guiManager.addDirectory(title=f' {self._t.getString(SEARCH)}',
+        self._guiManager.addDirectory(title=self._t.getString(SEARCH),
                                       args=self.buildArgs('search', self._BASEURL, json.dumps(tag)))
+        self._DirectoryBuilded = True
 
     @staticmethod
     def get_query_args(s_args):
@@ -230,4 +240,6 @@ class ArdMediathekClient:
 
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_NONE)
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_DATE)
-        self._guiManager.endOfDirectory()
+
+        if self._DirectoryBuilded:
+            self._guiManager.endOfDirectory()

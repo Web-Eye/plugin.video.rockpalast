@@ -56,10 +56,14 @@ msgctxt "#30016"
 msgid "Skip Details-View"
 msgstr "Überspringe Detailansicht"
 
-msgctxt "#30017"
+msgctxt "#30117"
 msgid "Home"
 msgstr "Startansicht"
 
-msgctxt "#30018"
+msgctxt "#30118"
+msgid "Search"
+msgstr "Suche"
+
+msgctxt "#30119"
 msgid "Search"
 msgstr "Suche"
