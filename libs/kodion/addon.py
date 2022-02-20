@@ -38,3 +38,6 @@ class Addon(xbmcaddon.Addon):
                 'skip_itemPage': 'true'
             }[name]
 
+    def setSetting(self, name, value):
+        if not self._debug:
+            return xbmcaddon.Addon.setSetting(self, name, value)

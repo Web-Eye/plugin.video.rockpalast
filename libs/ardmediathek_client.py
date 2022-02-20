@@ -18,6 +18,7 @@ import json
 import sys
 import urllib
 import urllib.parse
+import uuid
 
 from libs.kodion.addon import Addon
 from libs.ardmediathek_api import ARDMediathekAPI
@@ -51,9 +52,9 @@ class ArdMediathekClient:
         self._guiManager.setContent('movies')
 
         # -- Settings -----------------------------------------------
-        addon = Addon(self._ADDON_ID)
-        self._t = Translations(addon)
-        self._quality_id = int(addon.getSetting('quality'))
+        self._addon = Addon(self._ADDON_ID)
+        self._t = Translations(self._addon)
+        self._quality_id = int(self._addon.getSetting('quality'))
         self._PAGESIZE = {
             '0': 5,
             '1': 10,
@@ -61,8 +62,8 @@ class ArdMediathekClient:
             '3': 20,
             '4': 25,
             '5': 30
-        }[addon.getSetting('page_itemCount')]
-        self._skip_itemPage = (addon.getSetting('skip_itemPage') == 'true')
+        }[self._addon.getSetting('page_itemCount')]
+        self._skip_itemPage = (self._addon.getSetting('skip_itemPage') == 'true')
         # self._suppress_MusicClips = (addon.getSetting('suppress_MusicClips') == 'true')
         # self._suppress_durationSeconds = {
         #     '0': 0,
@@ -173,13 +174,16 @@ class ArdMediathekClient:
         self._DirectoryBuilded = True
 
     def setSearchView(self, url, tag=None):
+       search_guuid = 'not NONE'
+        if tag is not None and 'search_guuid' in tag:
+            search_guuid = tag.get('search_guuid')
 
-        # TODO: Disable search, when coming from Backbutton
-
-        _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
-        if _filter != '':
-            url = self._SEARCHURL.replace('{searchstring}', f'{self._showname}|{_filter}')
-            self.setListView(url, tag)
+        if self._addon.getSetting('search_guuid') != search_guuid:
+            self._addon.setSetting('search_guuid', search_guuid)
+            _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
+            if _filter != '':
+                url = self._SEARCHURL.replace('{searchstring}', f'{self._showname}|{_filter}')
+                self.setListView(url, tag)
 
     def setHomeView(self, url, tag=None):
         self._guiManager.addDirectory(title=self._t.getString(HOME),
@@ -189,7 +193,6 @@ class ArdMediathekClient:
                                       args=self.buildArgs('search', self._BASEURL, json.dumps(tag)))
         self._DirectoryBuilded = True
 
-    @staticmethod
     def get_query_args(s_args):
         args = urllib.parse.parse_qs(urllib.parse.urlparse(s_args).query)
 
@@ -197,9 +200,7 @@ class ArdMediathekClient:
             args[key] = args[key][0]
         return args
 
-    @staticmethod
     def buildArgs(method, url=None, tag=None):
-
         item = {
             'method': method,
         }
@@ -219,7 +220,8 @@ class ArdMediathekClient:
             tag = {
                 'pageNumber': 0,
                 'pageSize': self._PAGESIZE,
-                'posterWidth': self._POSTERWIDTH
+                'posterWidth': self._POSTERWIDTH,
+                'search_guuid': str(uuid.uuid4())
             }
 
             args = self.buildArgs('home', self._BASEURL, tag)
