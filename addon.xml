@@ -25,7 +25,7 @@
     <disclaimer lang="de_DE">Benutzung auf eigene Gefahr. Anregungen, Verbesserungen oder Bugs bitte direkt über GitHub posten.</disclaimer>
     <assets>
       <icon>resources/assets/icon.jpg</icon>
-      <fanart>https://api.ardmediathek.de/image-service/images/urn:ard:image:139ec54a14d5792b?w=1920&amp;f=</fanart>
+      <fanart>resources/assets/1080p/fanart.jpg</fanart>
       <!--
       <screenshot>resources/assets/screenshot_1.png</screenshot>
       <screenshot>resources/assets/screenshot_2.png</screenshot>

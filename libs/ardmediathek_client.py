@@ -69,8 +69,14 @@ class ArdMediathekClient:
         self._DEFAULT_IMAGE_URL = ''
 
         width = getScreenWidth()
-        fanart = f'https://api.ardmediathek.de/image-service/images/urn:ard:image:{fanart_id}?w={width}&f='
+        if width >= 2160:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/2160p/fanart.jpg'
+        elif width >= 1080:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/1080p/fanart.jpg'
+        else:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/720p/fanart.jpg'
 
+        fanart = kodionUtils.translatePath(fanart)
         self._guiManager = GuiManager(sys.argv[1], self._ADDON_ID, self._DEFAULT_IMAGE_URL, fanart)
         self._POSTERWIDTH = int(width/3)
         self._guiManager.setContent('movies')
