@@ -22,15 +22,38 @@ import uuid
 
 from libs.kodion.addon import Addon
 from libs.ardmediathek_api import ARDMediathekAPI
-from libs.kodion.gui_manager import GuiManager
+from libs.kodion.gui_manager import *
+
 from libs.kodion.utils import Utils as kodionUtils
 from libs.utils import utils
 from libs.translations import *
 
 
+def buildArgs(method, url=None, tag=None):
+    item = {
+        'method': method,
+    }
+
+    if url is not None:
+        item['url'] = url
+
+    if tag is not None:
+        item['tag'] = tag
+
+    return item
+
+
+def get_query_args(s_args):
+    args = urllib.parse.parse_qs(urllib.parse.urlparse(s_args).query)
+
+    for key in args:
+        args[key] = args[key][0]
+    return args
+
+
 class ArdMediathekClient:
 
-    def __init__(self, addon_id, mediathek_id, channel, show_name, fanart):
+    def __init__(self, addon_id, mediathek_id, channel, show_name, fanart_id):
 
         # -- Constants ----------------------------------------------
         self._ADDON_ID = addon_id
@@ -42,13 +65,14 @@ class ArdMediathekClient:
         self._SEARCHURL = f'https://page.ardmediathek.de/page-gateway/widgets/{channel}/search/vod' \
                           '?searchString={searchstring}&pageNumber={pageNumber}'
 
-        self._POSTERWIDTH = 480
         self._showname = show_name
-        fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/{fanart}'
-        self._FANART = kodionUtils.translatePath(fanart)
         self._DEFAULT_IMAGE_URL = ''
 
-        self._guiManager = GuiManager(sys.argv[1], self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)
+        width = getScreenWidth()
+        fanart = f'https://api.ardmediathek.de/image-service/images/urn:ard:image:{fanart_id}?w={width}&f='
+
+        self._guiManager = GuiManager(sys.argv[1], self._ADDON_ID, self._DEFAULT_IMAGE_URL, fanart)
+        self._POSTERWIDTH = int(width/3)
         self._guiManager.setContent('movies')
 
         # -- Settings -----------------------------------------------
@@ -135,7 +159,7 @@ class ArdMediathekClient:
         }
 
         self._guiManager.addDirectory(title=title, poster=teaser['poster'], _type='Video',
-                                      infoLabels=infoLabels, args=self.buildArgs('item', teaser['url']))
+                                      infoLabels=infoLabels, args=buildArgs('item', teaser['url']))
         self._DirectoryBuilded = True
 
     def addClip(self, teaser):
@@ -169,12 +193,12 @@ class ArdMediathekClient:
                     'posterWidth': self._POSTERWIDTH
                 }
                 self._guiManager.addDirectory(title=f'Page {strPageNumber}',
-                                              args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
+                                              args=buildArgs('list', self._BASEURL, json.dumps(tag)))
 
         self._DirectoryBuilded = True
 
     def setSearchView(self, url, tag=None):
-       search_guuid = 'not NONE'
+        search_guuid = 'not NONE'
         if tag is not None and 'search_guuid' in tag:
             search_guuid = tag.get('search_guuid')
 
@@ -187,35 +211,15 @@ class ArdMediathekClient:
 
     def setHomeView(self, url, tag=None):
         self._guiManager.addDirectory(title=self._t.getString(HOME),
-                                      args=self.buildArgs('list', self._BASEURL, json.dumps(tag)))
+                                      args=buildArgs('list', self._BASEURL, json.dumps(tag)))
 
         self._guiManager.addDirectory(title=self._t.getString(SEARCH),
-                                      args=self.buildArgs('search', self._BASEURL, json.dumps(tag)))
+                                      args=buildArgs('search', self._BASEURL, json.dumps(tag)))
         self._DirectoryBuilded = True
-
-    def get_query_args(s_args):
-        args = urllib.parse.parse_qs(urllib.parse.urlparse(s_args).query)
-
-        for key in args:
-            args[key] = args[key][0]
-        return args
-
-    def buildArgs(method, url=None, tag=None):
-        item = {
-            'method': method,
-        }
-
-        if url is not None:
-            item['url'] = url
-
-        if tag is not None:
-            item['tag'] = tag
-
-        return item
 
     def DoSome(self):
 
-        args = self.get_query_args(sys.argv[2])
+        args = get_query_args(sys.argv[2])
         if args is None or args.__len__() == 0:
             tag = {
                 'pageNumber': 0,
@@ -224,7 +228,7 @@ class ArdMediathekClient:
                 'search_guuid': str(uuid.uuid4())
             }
 
-            args = self.buildArgs('home', self._BASEURL, tag)
+            args = buildArgs('home', self._BASEURL, tag)
 
         method = args.get('method')
         url = args.get('url')

@@ -23,6 +23,14 @@ import xbmc
 import urllib.parse
 
 
+def getScreenHeight():
+    return xbmcgui.getScreenHeight()
+
+
+def getScreenWidth():
+    return xbmcgui.getScreenWidth()
+
+
 class GuiManager:
 
     SORT_METHOD_NONE = xbmcplugin.SORT_METHOD_NONE
@@ -108,4 +116,3 @@ class GuiManager:
 
         else:
             return debugDefault
-

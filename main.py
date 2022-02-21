@@ -22,8 +22,8 @@ if __name__ == '__main__':
     channel = 'wdr'
     show_name = 'Rockpalast'
     mediathek_id = 'Y3JpZDovL3dkci5kZS9Sb2NrcGFsYXN0'
-    fanart = 'fanart.jpeg'
+    fanart_id = '139ec54a14d5792b'
 
-    app = ArdMediathekClient(addon_id, mediathek_id, channel, show_name, fanart)
+    app = ArdMediathekClient(addon_id, mediathek_id, channel, show_name, fanart_id)
     app.DoSome()
 
