@@ -26,11 +26,9 @@
     <assets>
       <icon>resources/assets/icon.jpg</icon>
       <fanart>resources/assets/1080p/fanart.jpg</fanart>
-      <!--
       <screenshot>resources/assets/screenshot_1.png</screenshot>
       <screenshot>resources/assets/screenshot_2.png</screenshot>
       <screenshot>resources/assets/screenshot_3.png</screenshot>
-      -->
     </assets>
     <news>
     </news>
