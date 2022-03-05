@@ -58,7 +58,7 @@ msgstr "Überspringe Detailansicht"
 
 msgctxt "#30117"
 msgid "Home"
-msgstr "Startansicht"
+msgstr "Hauptansicht"
 
 msgctxt "#30118"
 msgid "Search"
