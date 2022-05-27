@@ -43,3 +43,13 @@ class utils:
         if dateTime is not None:
             return dateTime.strftime(strFormat)
 
+    @staticmethod
+    def convertDateTime(strDateTime, srcFormat, dstFormat):
+
+        try:
+            dt = utils.getDateTime(strDateTime, srcFormat)
+            if dt is not None:
+                return dt.strftime(dstFormat)
+
+        except ValueError:
+            return None

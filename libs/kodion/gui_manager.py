@@ -116,3 +116,7 @@ class GuiManager:
 
         else:
             return debugDefault
+
+    @staticmethod
+    def setToastNotification(header, message, time=5000, image=None):
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)' % (header, message, time, image))

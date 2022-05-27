@@ -19,7 +19,9 @@ import sys
 import urllib
 import urllib.parse
 import uuid
+import mysql.connector
 
+from libs.database.database_api import DBAPI
 from libs.kodion.addon import Addon
 from libs.ardmediathek_api import ARDMediathekAPI
 from libs.kodion.gui_manager import *
@@ -65,8 +67,8 @@ class ArdMediathekClient:
         self._SEARCHURL = f'https://page.ardmediathek.de/page-gateway/widgets/{channel}/search/vod' \
                           '?searchString={searchstring}&pageNumber={pageNumber}'
 
-        self._showname = show_name
         self._DEFAULT_IMAGE_URL = ''
+        self._showname = show_name
 
         width = getScreenWidth()
         if width >= 2160:
@@ -83,25 +85,27 @@ class ArdMediathekClient:
 
         # -- Settings -----------------------------------------------
         self._addon = Addon(self._ADDON_ID)
+        self._addon_name = self._addon.getAddonInfo('name')
+        self._addon_icon = self._addon.getAddonInfo('icon')
         self._t = Translations(self._addon)
         self._quality_id = int(self._addon.getSetting('quality'))
-        self._PAGESIZE = {
-            '0': 5,
-            '1': 10,
-            '2': 15,
-            '3': 20,
-            '4': 25,
-            '5': 30
-        }[self._addon.getSetting('page_itemCount')]
+        self._PAGESIZE = int(self._addon.getSetting('page_itemCount'))
         self._skip_itemPage = (self._addon.getSetting('skip_itemPage') == 'true')
-        # self._suppress_MusicClips = (addon.getSetting('suppress_MusicClips') == 'true')
-        # self._suppress_durationSeconds = {
-        #     '0': 0,
-        #     '1': 30,
-        #     '2': 60,
-        #     '3': 180,
-        #     '4': 300
-        # }[addon.getSetting('suppress_duration')]
+        self._suppress_Interview = (self._addon.getSetting('suppress_Interview') == 'true')
+        self._suppress_Unplugged = (self._addon.getSetting('suppress_Unplugged') == 'true')
+        self._suppress_durationSeconds = int(self._addon.getSetting('suppress_duration'))
+
+        self._db_enabled = (self._addon.getSetting('database_enabled') == 'true')
+        self._db_config = None
+        if self._db_enabled:
+            self._db_config = {
+                'host': self._addon.getSetting('db_host'),
+                'port': int(self._addon.getSetting('db_port')),
+                'user': self._addon.getSetting('db_username'),
+                'password': self._addon.getSetting('db_password'),
+                'database': 'KodiWebGrabber_Test'
+            }
+            self._skip_itemPage = True
 
         self._DirectoryBuilded = False
 
@@ -129,14 +133,17 @@ class ArdMediathekClient:
                                      infoLabels=infoLabels)
             self._DirectoryBuilded = True
 
-    # def _isValidTeaser(self, teaser):
-    #     if self._suppress_MusicClips and 'Musik bei Inas Nacht:' in teaser['title']:
-    #         return False
-    #
-    #     if self._suppress_durationSeconds > 0 and teaser['duration'] < self._suppress_durationSeconds:
-    #         return False
-    #
-    #     return True
+    def _isValidTeaser(self, teaser):
+        if self._suppress_Interview and 'Interview' in teaser['title']:
+            return False
+
+        if self._suppress_Unplugged and 'Unplugged:' in teaser['title']:
+            return False
+
+        if self._suppress_durationSeconds > 0 and teaser['duration'] < self._suppress_durationSeconds:
+            return False
+
+        return True
 
     def addItemPage(self, teaser):
         title = teaser['title']
@@ -169,18 +176,46 @@ class ArdMediathekClient:
         self._DirectoryBuilded = True
 
     def addClip(self, teaser):
-        url = teaser['url']
-        self.setItemView(url, None)
+        if not self._db_enabled:
+            url = teaser['url']
+            self.setItemView(url, None)
+
+        else:
+            title = teaser['title']
+            broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
+
+            infoLabels = {
+                'Title': title,
+                'Plot': teaser['plot'],
+                'Date': broadcastedOn,
+                'Aired': broadcastedOn,
+                'Duration': teaser['duration']
+            }
+
+            self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
+                                     infoLabels=infoLabels)
 
     def setListView(self, url, tag=None):
-        API = ARDMediathekAPI(url, tag)
-        pagination = API.getPagination()
+
+        if not self._db_enabled:
+            API = ARDMediathekAPI(url, tag)
+        else:
+            tag['quality'] = self._quality_id
+            tag['suppress_Interview'] = self._suppress_Interview
+            tag['suppress_Unplugged'] = self._suppress_Unplugged
+            tag['suppress_durationSeconds'] = self._suppress_durationSeconds
+            try:
+                API = DBAPI(self._db_config, tag)
+            except mysql.connector.Error as e:
+                self._guiManager.setToastNotification(self._addon_name, e.msg, image=self._addon_icon)
+                return
+
         teasers = API.getTeaser()
+        pagination = API.getPagination()
 
         if teasers is not None:
             for teaser in teasers:
-                # if self._isValidTeaser(teaser):
-                if True:
+                if self._db_enabled or self._isValidTeaser(teaser):
                     {
                         False: self.addItemPage,
                         True: self.addClip
@@ -204,6 +239,7 @@ class ArdMediathekClient:
         self._DirectoryBuilded = True
 
     def setSearchView(self, url, tag=None):
+        # TODO: searching in database....
         search_guuid = 'not NONE'
         if tag is not None and 'search_guuid' in tag:
             search_guuid = tag.get('search_guuid')

@@ -32,10 +32,16 @@ class Addon(xbmcaddon.Addon):
         else:
             return {
                 'quality': '3',
-                'suppress_MusicClips': 'true',
+                'suppress_Interview': 'false',
+                'suppress_Unplugged': 'false',
                 'suppress_duration': '2',
                 'page_itemCount': '5',
-                'skip_itemPage': 'true'
+                'skip_itemPage': 'true',
+                'database_enabled': 'true',
+                'db_host': 'fsnas01',
+                'db_port': '3306',
+                'db_username': 'kodi',
+                'db_password': 'kodi'
             }[name]
 
     def setSetting(self, name, value):
