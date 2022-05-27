@@ -48,12 +48,48 @@ msgctxt "#30007"
 msgid "Preferred Quality"
 msgstr ""
 
+msgctxt "#30008"
+msgid "Skip Interviews"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Skip Unplugged Shows"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Suppress Shows shorter than"
+msgstr ""
+
 msgctxt "#30015"
 msgid "Items per Page"
 msgstr ""
 
 msgctxt "#30016"
 msgid "Skip Details-View"
+msgstr ""
+
+msgctxt "#30017"
+msgid "Database"
+msgstr ""
+
+msgctxt "#30018"
+msgid "enabled"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Host"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Port"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Username"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Password"
 msgstr ""
 
 msgctxt "#30117"
@@ -66,4 +102,72 @@ msgstr ""
 
 msgctxt "#30119"
 msgid "Search"
+msgstr ""
+
+msgctxt "#30200"
+msgid "270p"
+msgstr ""
+
+msgctxt "#30201"
+msgid "360p"
+msgstr ""
+
+msgctxt "#30202"
+msgid "540p"
+msgstr ""
+
+msgctxt "#30203"
+msgid "720p"
+msgstr ""
+
+msgctxt "#30204"
+msgid "1080p"
+msgstr ""
+
+msgctxt "#30205"
+msgid "Best"
+msgstr ""
+
+msgctxt "#30300"
+msgid "5"
+msgstr ""
+
+msgctxt "#30301"
+msgid "10"
+msgstr ""
+
+msgctxt "#30302"
+msgid "15"
+msgstr ""
+
+msgctxt "#30303"
+msgid "20"
+msgstr ""
+
+msgctxt "#30304"
+msgid "25"
+msgstr ""
+
+msgctxt "#30305"
+msgid "30"
+msgstr ""
+
+msgctxt "#30400"
+msgid "Off"
+msgstr ""
+
+msgctxt "#30401"
+msgid "30 Seconds"
+msgstr ""
+
+msgctxt "#30402"
+msgid "1 Minute"
+msgstr ""
+
+msgctxt "#30403"
+msgid "3 Minutes"
+msgstr ""
+
+msgctxt "#30404"
+msgid "5 Minutes"
 msgstr ""

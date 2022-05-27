@@ -48,6 +48,18 @@ msgctxt "#30007"
 msgid "Preferred Quality"
 msgstr "Bevorzugte Qualität"
 
+msgctxt "#30008"
+msgid "Skip Interviews"
+msgstr "Überspringe Interviews"
+
+msgctxt "#30009"
+msgid "Skip Unplugged Shows"
+msgstr "Überspringe Unplugged Shows"
+
+msgctxt "#30010"
+msgid "Suppress Shows shorter than"
+msgstr "Unterdrücke Sendungen, die kürzer sind als"
+
 msgctxt "#30015"
 msgid "Items per Page"
 msgstr "Einträge pro Seite"
@@ -55,6 +67,30 @@ msgstr "Einträge pro Seite"
 msgctxt "#30016"
 msgid "Skip Details-View"
 msgstr "Überspringe Detailansicht"
+
+msgctxt "#30017"
+msgid "Database"
+msgstr "Datenbank"
+
+msgctxt "#30018"
+msgid "enabled"
+msgstr "Aktiviert"
+
+msgctxt "#30019"
+msgid "Host"
+msgstr "Host"
+
+msgctxt "#30020"
+msgid "Port"
+msgstr "Port"
+
+msgctxt "#30021"
+msgid "Username"
+msgstr "Username"
+
+msgctxt "#30022"
+msgid "Password"
+msgstr "Password"
 
 msgctxt "#30117"
 msgid "Home"
@@ -67,3 +103,71 @@ msgstr "Suche"
 msgctxt "#30119"
 msgid "Search"
 msgstr "Suche"
+
+msgctxt "#30200"
+msgid "270p"
+msgstr ""
+
+msgctxt "#30201"
+msgid "360p"
+msgstr ""
+
+msgctxt "#30202"
+msgid "540p"
+msgstr ""
+
+msgctxt "#30203"
+msgid "720p"
+msgstr ""
+
+msgctxt "#30204"
+msgid "1080p"
+msgstr ""
+
+msgctxt "#30205"
+msgid "Best"
+msgstr ""
+
+msgctxt "#30300"
+msgid "5"
+msgstr ""
+
+msgctxt "#30301"
+msgid "10"
+msgstr ""
+
+msgctxt "#30302"
+msgid "15"
+msgstr ""
+
+msgctxt "#30303"
+msgid "20"
+msgstr ""
+
+msgctxt "#30304"
+msgid "25"
+msgstr ""
+
+msgctxt "#30305"
+msgid "30"
+msgstr ""
+
+msgctxt "#30400"
+msgid "Off"
+msgstr "Aus"
+
+msgctxt "#30401"
+msgid "30 Seconds"
+msgstr "30 Sekunden"
+
+msgctxt "#30402"
+msgid "1 Minute"
+msgstr "1 Minute"
+
+msgctxt "#30403"
+msgid "3 Minutes"
+msgstr "3 Minuten"
+
+msgctxt "#30404"
+msgid "5 Minutes"
+msgstr "5 Minuten"
