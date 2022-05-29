@@ -31,7 +31,7 @@ from libs.utils import utils
 from libs.translations import *
 
 
-def buildArgs(method, url=None, tag=None):
+def buildArgs(method, url=None, pageNumber=None, search_guuid=None):
     item = {
         'method': method,
     }
@@ -39,8 +39,11 @@ def buildArgs(method, url=None, tag=None):
     if url is not None:
         item['url'] = url
 
-    if tag is not None:
-        item['tag'] = tag
+    if pageNumber is not None:
+        item['pageNumber'] = pageNumber
+
+    if search_guuid is not None:
+        item['search_guuid'] = search_guuid
 
     return item
 
@@ -109,7 +112,7 @@ class ArdMediathekClient:
 
         self._DirectoryBuilded = False
 
-    def setItemView(self, url, tag=None):
+    def setItemView(self, url=None, pageNumber=None, search_guuid=None):
 
         tag = {
             'posterWidth': self._POSTERWIDTH,
@@ -172,13 +175,13 @@ class ArdMediathekClient:
         }
 
         self._guiManager.addDirectory(title=title, poster=teaser['poster'], _type='Video',
-                                      infoLabels=infoLabels, args=buildArgs('item', teaser['url']))
+                                      infoLabels=infoLabels, args=buildArgs(method='item', url=teaser['url']))
         self._DirectoryBuilded = True
 
     def addClip(self, teaser):
         if not self._db_enabled:
             url = teaser['url']
-            self.setItemView(url, None)
+            self.setItemView(url)
 
         else:
             title = teaser['title']
@@ -195,15 +198,25 @@ class ArdMediathekClient:
             self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
                                      infoLabels=infoLabels)
 
-    def setListView(self, url, tag=None):
+    def setListView(self, url=None, pageNumber=None, search_guuid=None):
+        if pageNumber is None:
+            pageNumber = 0
+        tag = {
+            'pageNumber': pageNumber,
+            'pageSize': self._PAGESIZE,
+            'posterWidth': self._POSTERWIDTH,
+            'quality': self._quality_id,
+            'suppress_Interview': self._suppress_Interview,
+            'suppress_Unplugged': self._suppress_Unplugged,
+            'suppress_durationSeconds': self._suppress_durationSeconds
+
+        }
 
         if not self._db_enabled:
+            if url is None:
+                url = self._BASEURL
             API = ARDMediathekAPI(url, tag)
         else:
-            tag['quality'] = self._quality_id
-            tag['suppress_Interview'] = self._suppress_Interview
-            tag['suppress_Unplugged'] = self._suppress_Unplugged
-            tag['suppress_durationSeconds'] = self._suppress_durationSeconds
             try:
                 API = DBAPI(self._db_config, tag)
             except mysql.connector.Error as e:
@@ -228,63 +241,75 @@ class ArdMediathekClient:
 
             if totalElements > ((pageNumber + 1) * pageSize):
                 strPageNumber = str(pageNumber + 2)
-                tag = {
-                    'pageNumber': pageNumber + 1,
-                    'pageSize': self._PAGESIZE,
-                    'posterWidth': self._POSTERWIDTH
-                }
                 self._guiManager.addDirectory(title=f'Page {strPageNumber}',
-                                              args=buildArgs('list', self._BASEURL, json.dumps(tag)))
+                                              args=buildArgs('list', pageNumber=pageNumber))
 
         self._DirectoryBuilded = True
 
-    def setSearchView(self, url, tag=None):
+    def setSearchView(self, url=None, pageNumber=None, search_guuid=None):
         # TODO: searching in database....
-        search_guuid = 'not NONE'
-        if tag is not None and 'search_guuid' in tag:
-            search_guuid = tag.get('search_guuid')
+        # search_guuid = 'not NONE'
+        # if tag is not None and 'search_guuid' in tag:
+        #     search_guuid = tag.get('search_guuid')
+        #
+        # if self._addon.getSetting('search_guuid') != search_guuid:
+        #     self._addon.setSetting('search_guuid', search_guuid)
+        #     _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
+        #     if _filter != '':
+        #         _filter = _filter.replace(' ', '+')
+        #         _searchstring = urllib.parse.quote(f'{self._showname}|{_filter}')
+        #         url = self._SEARCHURL.replace('{searchstring}', _searchstring)
+        #         self.setListView(url, tag)
 
-        if self._addon.getSetting('search_guuid') != search_guuid:
-            self._addon.setSetting('search_guuid', search_guuid)
+        # if self._addon.getSetting('search_guuid') == search_guuid:
+        if True:
             _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
             if _filter != '':
-                url = self._SEARCHURL.replace('{searchstring}', f'{self._showname}|{_filter}')
-                self.setListView(url, tag)
+                _filter = _filter.replace(' ', '+')
+                _searchstring = urllib.parse.quote(f'{self._showname}|{_filter}')
+                url = self._SEARCHURL.replace('{searchstring}', _searchstring)
+                self.setListView(url, pageNumber)
 
-    def setHomeView(self, url, tag=None):
+    def setHomeView(self, url=None, pageNumber=None, search_guuid=None):
+
+        search_guuid = str(uuid.uuid4())
+        self._addon.setSetting('search_guuid', search_guuid)
+
         self._guiManager.addDirectory(title=self._t.getString(HOME),
-                                      args=buildArgs('list', self._BASEURL, json.dumps(tag)))
+                                      args=buildArgs(method='list', pageNumber=pageNumber))
 
         self._guiManager.addDirectory(title=self._t.getString(SEARCH),
-                                      args=buildArgs('search', self._BASEURL, json.dumps(tag)))
+                                      args=buildArgs(method='search', pageNumber=pageNumber, search_guuid=search_guuid))
         self._DirectoryBuilded = True
 
     def DoSome(self):
 
         args = get_query_args(sys.argv[2])
         if args is None or args.__len__() == 0:
-            tag = {
-                'pageNumber': 0,
-                'pageSize': self._PAGESIZE,
-                'posterWidth': self._POSTERWIDTH,
-                'search_guuid': str(uuid.uuid4())
-            }
+            # tag = {
+            #     'pageNumber': 0,
+            #     'search_guuid': str(uuid.uuid4())
+            # }
 
-            args = buildArgs('home', self._BASEURL, tag)
+            args = buildArgs(method='home')
 
         method = args.get('method')
-        url = args.get('url')
-        tag = args.get('tag')
-
-        if tag is not None and isinstance(tag, str):
-            tag = json.loads(tag)
+        url = None
+        if 'url' in args:
+            url = args.get('url')
+        pageNumber = None
+        if 'pageNumber' in args:
+            pageNumber = args.get('pageNumber')
+        search_guuid = None
+        if 'search_guuid' in args:
+            search_guuid = args.get('search_guuid')
 
         {
             'home': self.setHomeView,
             'search': self.setSearchView,
             'list': self.setListView,
             'item': self.setItemView
-        }[method](url, tag)
+        }[method](url, pageNumber, search_guuid)
 
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_NONE)
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_DATE)
