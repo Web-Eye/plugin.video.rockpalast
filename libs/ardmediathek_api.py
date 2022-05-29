@@ -89,6 +89,12 @@ class ARDMediathekAPI:
                 }
 
     def _getItemUrl(self, mediastreamarray):
-        for stream in mediastreamarray:
-            if stream['_quality'] == self._quality_id:
-                return stream['_stream']
+        if self._quality_id < 5:
+            for stream in mediastreamarray:
+                if stream['_quality'] == self._quality_id:
+                    return stream['_stream']
+
+        else:
+            li = list(filter(lambda p: isinstance(p['_quality'], int), mediastreamarray))
+            if li is not None and len(li) > 0:
+                return max(li, key=lambda p: int(p['_quality']))['_stream']
