@@ -242,7 +242,7 @@ class ArdMediathekClient:
             if totalElements > ((pageNumber + 1) * pageSize):
                 strPageNumber = str(pageNumber + 2)
                 self._guiManager.addDirectory(title=f'Page {strPageNumber}',
-                                              args=buildArgs('list', pageNumber=pageNumber))
+                                              args=buildArgs('list', pageNumber=pageNumber+1))
 
         self._DirectoryBuilded = True
 
@@ -275,11 +275,6 @@ class ArdMediathekClient:
 
         args = get_query_args(sys.argv[2])
         if args is None or args.__len__() == 0:
-            # tag = {
-            #     'pageNumber': 0,
-            #     'search_guuid': str(uuid.uuid4())
-            # }
-
             args = buildArgs(method='home')
 
         method = args.get('method')
