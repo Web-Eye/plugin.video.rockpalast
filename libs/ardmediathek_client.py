@@ -198,7 +198,7 @@ class ArdMediathekClient:
             self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
                                      infoLabels=infoLabels)
 
-    def setListView(self, url=None, pageNumber=None, search_guuid=None):
+    def setListView(self, url=None, pageNumber=None, search_guuid=None, searchString=None):
         if pageNumber is None:
             pageNumber = 0
         tag = {
@@ -208,8 +208,8 @@ class ArdMediathekClient:
             'quality': self._quality_id,
             'suppress_Interview': self._suppress_Interview,
             'suppress_Unplugged': self._suppress_Unplugged,
-            'suppress_durationSeconds': self._suppress_durationSeconds
-
+            'suppress_durationSeconds': self._suppress_durationSeconds,
+            'filter': searchString
         }
 
         if not self._db_enabled:
@@ -247,14 +247,16 @@ class ArdMediathekClient:
         self._DirectoryBuilded = True
 
     def setSearchView(self, url=None, pageNumber=None, search_guuid=None):
-        # TODO: searching in database....
         if self._addon.getSetting('search_guuid') == search_guuid:
             _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
             if _filter != '':
-                _filter = _filter.replace(' ', '+')
-                _searchstring = urllib.parse.quote(f'{self._showname}|{_filter}')
-                url = self._SEARCHURL.replace('{searchstring}', _searchstring)
-                self.setListView(url, pageNumber)
+                if not self._db_enabled:
+                    _filter = _filter.replace(' ', '+')
+                    _searchstring = urllib.parse.quote(f'{self._showname}|{_filter}')
+                    url = self._SEARCHURL.replace('{searchstring}', _searchstring)
+                    self.setListView(url=url, pageNumber=pageNumber)
+                else:
+                    self.setListView(pageNumber=pageNumber, searchString=_filter)
 
         else:
             self._addon.setSetting('search_guuid', search_guuid)

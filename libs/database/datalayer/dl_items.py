@@ -56,6 +56,19 @@ class DL_items:
             innerWhereClause += ' AND quality = %s'
             parameter += ('270p',)
 
+        if query['filter'] is not None:
+            _filter = query['filter'].split()
+            if len(_filter) > 0:
+                innerWhereClause += ' AND ('
+                searchString = ''
+                for _f in _filter:
+                    if searchString != '':
+                        searchString += ' OR '
+                    searchString += 'title LIKE %s'
+                    parameter += ('%' + _f + '%', )
+
+                innerWhereClause += searchString + ')'
+
         minItem = (query['page'] - 1) * query['pageSize'] + 1
         maxItem = minItem + query['pageSize'] - 1
         parameter += (minItem, maxItem, )
@@ -124,6 +137,19 @@ class DL_items:
         elif query['quality'] == 0:
             whereClause += ' AND quality = %s'
             parameter += ('270p',)
+
+        if query['filter'] is not None:
+            _filter = query['filter'].split()
+            if len(_filter) > 0:
+                whereClause += ' AND ('
+                searchString = ''
+                for _f in _filter:
+                    if searchString != '':
+                        searchString += ' OR '
+                    searchString += 'title LIKE %s'
+                    parameter += ('%' + _f + '%', )
+
+                whereClause += searchString + ')'
 
         sQuery = f'SELECT COUNT(*) FROM viewItemLinks WHERE {whereClause};'
 

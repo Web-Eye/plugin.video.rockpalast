@@ -44,6 +44,8 @@ class DBAPI:
                 self._suppress_Unplugged = tag.get('suppress_Unplugged')
             if 'suppress_durationSeconds' in tag:
                 self._suppress_durationSeconds = tag.get('suppress_durationSeconds')
+            if 'filter' in tag:
+                self._filter = tag.get('filter')
 
         self._cnx = mysql.connector.Connect(**db_config)
 
@@ -55,9 +57,10 @@ class DBAPI:
         query = {
             'project': 'ROCKPALAST',
             'quality': self._quality_id,
-            'page': self._pageNumber + 1,
+            'page': int(self._pageNumber) + 1,
             'pageSize': self._pageSize,
-            'posterWidth': self._posterWidth
+            'posterWidth': self._posterWidth,
+            'filter': self._filter
         }
 
         if self._suppress_Interview and self._suppress_Unplugged:
@@ -75,7 +78,8 @@ class DBAPI:
     def getPagination(self):
         query = {
             'project': 'INASNACHT',
-            'quality': self._quality_id
+            'quality': self._quality_id,
+            'filter': self._filter
         }
 
         if self._suppress_Interview and self._suppress_Unplugged:
@@ -91,7 +95,7 @@ class DBAPI:
         item_count = DL_items.getCount(self._cnx, query)
 
         return {
-            'pageNumber': self._pageNumber,
+            'pageNumber': int(self._pageNumber),
             'pageSize': self._pageSize,
             'totalElements': item_count
         }
