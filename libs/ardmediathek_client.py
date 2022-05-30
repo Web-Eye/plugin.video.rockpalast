@@ -248,27 +248,16 @@ class ArdMediathekClient:
 
     def setSearchView(self, url=None, pageNumber=None, search_guuid=None):
         # TODO: searching in database....
-        # search_guuid = 'not NONE'
-        # if tag is not None and 'search_guuid' in tag:
-        #     search_guuid = tag.get('search_guuid')
-        #
-        # if self._addon.getSetting('search_guuid') != search_guuid:
-        #     self._addon.setSetting('search_guuid', search_guuid)
-        #     _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
-        #     if _filter != '':
-        #         _filter = _filter.replace(' ', '+')
-        #         _searchstring = urllib.parse.quote(f'{self._showname}|{_filter}')
-        #         url = self._SEARCHURL.replace('{searchstring}', _searchstring)
-        #         self.setListView(url, tag)
-
-        # if self._addon.getSetting('search_guuid') == search_guuid:
-        if True:
+        if self._addon.getSetting('search_guuid') == search_guuid:
             _filter = self._guiManager.getInput('', self._t.getString(SEARCHHEADER), False)
             if _filter != '':
                 _filter = _filter.replace(' ', '+')
                 _searchstring = urllib.parse.quote(f'{self._showname}|{_filter}')
                 url = self._SEARCHURL.replace('{searchstring}', _searchstring)
                 self.setListView(url, pageNumber)
+
+        else:
+            self._addon.setSetting('search_guuid', search_guuid)
 
     def setHomeView(self, url=None, pageNumber=None, search_guuid=None):
 
