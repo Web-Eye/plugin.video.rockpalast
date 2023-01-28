@@ -92,6 +92,10 @@ msgctxt "#30022"
 msgid "Password"
 msgstr ""
 
+msgctxt "#30023"
+msgid "Database"
+msgstr ""
+
 msgctxt "#30117"
 msgid "Home"
 msgstr ""

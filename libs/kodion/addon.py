@@ -41,7 +41,8 @@ class Addon(xbmcaddon.Addon):
                 'db_host': 'fsnas01',
                 'db_port': '3306',
                 'db_username': 'kodi',
-                'db_password': 'kodi'
+                'db_password': 'kodi',
+                'db_databasename': 'KodiWebGrabber_Test'
             }[name]
 
     def setSetting(self, name, value):

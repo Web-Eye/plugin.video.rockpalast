@@ -106,7 +106,7 @@ class ArdMediathekClient:
                 'port': int(self._addon.getSetting('db_port')),
                 'user': self._addon.getSetting('db_username'),
                 'password': self._addon.getSetting('db_password'),
-                'database': 'KodiWebGrabber_Test'
+                'database': self._addon.getSetting('db_databasename')
             }
             self._skip_itemPage = True
 
